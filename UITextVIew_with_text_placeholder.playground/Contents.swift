@@ -22,6 +22,8 @@ textView.textAlignment = .left
 containerView.addSubview(textView)
 
 class TextViewWithPlaceholder: UITextView {
+    var showPlaceholder = true
+    
     override func layoutSubviews() {
         super.layoutSubviews()
         delegate = self
@@ -35,7 +37,7 @@ class TextViewWithPlaceholder: UITextView {
         self.layer.borderColor = UIColor.lightGray.cgColor
         self.layer.borderWidth = 1.0
         
-        if self.text.characters.count == 0 {
+        if showPlaceholder {
             let newRect = CGRect(x: 4, y: 3, width: rect.width, height: rect.height)
             drawText(myText: "Placeholder...", textColor: UIColor.lightGray, inRect: newRect)
         }
@@ -54,6 +56,18 @@ extension TextViewWithPlaceholder: UITextViewDelegate {
     
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         return true
+    }
+    
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        showPlaceholder = false
+        setNeedsDisplay()
+    }
+    
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if self.text.characters.count == 0 {
+            showPlaceholder = true
+            setNeedsDisplay()
+        }
     }
 }
 
